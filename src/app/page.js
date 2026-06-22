@@ -1,4 +1,5 @@
 import { getPosts } from "../lib/wordpress";
+import Link from "next/link";
 
 export default async function Home() {
   const posts = await getPosts();
@@ -10,6 +11,7 @@ export default async function Home() {
         </h1>
 
         {posts.map((post) => {
+          console.log(post);
           
           const author =
             post._embedded?.author?.[0]?.name || "Unknown Author";
@@ -23,15 +25,19 @@ export default async function Home() {
             }
           );
           
+          const postDate = new Date(post.date);
+          console.log(postDate);
 
+          const year = postDate.getFullYear();
+          const month = String(postDate.getMonth() + 1).padStart(2, "0");
+          const day = String(postDate.getDate()).padStart(2, "0");
           
-          console.log(post);
-
+          
           return (
-            <div key={post.id} className="mb-6 border-b pb-4">
-              <h2 className="text-xl font-semibold" dangerouslySetInnerHTML={{__html: post.title.rendered,}}/>
+            <article key={post.id} className="mb-6 border-b pb-4">
+              <h2><Link href={`posts/${post.slug}`}>{post.title.rendered}</Link></h2>
               <p className="text-sm text-gray-500 mt-2">By {author} • {date}</p>
-            </div>
+            </article>
           )
         })}
     </main>
